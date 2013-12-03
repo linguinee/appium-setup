@@ -1,11 +1,30 @@
 #!/bin/bash
-# appium_env - installs software needed to develop Appium tests on Mac OS X.
+# appium_env.sh - installs software needed to develop Appium tests on Mac OS X.
+
 # Tested on OS X v10.8 (Mountain Lion).
 
+# Example usage:
+#   ./appium_env.sh [options]
+
+# Running the script with no options installs Appium software only (no
+# language-specific software).
+
+# Options:
+#   -h, --help   Prints usage.
+#   -a, --all    Installs all software for all languages.
+#   --no-source  Does not clone the appium source code.
+#   --haskell    Installs Haskell software.
+#   --java       Installs Java software.
+#   --obj-c      Installs Objective-C software.
+#   --perl       Installs Perl software.
+#   --php        Installs PHP software.
+#   --python     Installs Python software.
+#   --ruby       Installs Ruby software.
+
 # Script adapted from
-#   https://github.com/thoughtbot/laptop/blob/master/mac
+#   https://github.com/thoughtbot/laptop/blob/master/mac.
 # Text color variables adapted from
-#   http://linuxtidbits.wordpress.com/2012/01/20/bash-script-templates/
+#   http://linuxtidbits.wordpress.com/2012/01/20/bash-script-templates.
 
 # NOTE TO SELF: exit status 0 is GOOD.
 
@@ -15,28 +34,22 @@ export TOP_PID=$$
 txtrst=$(tput sgr0)              # Reset
 txtbld=$(tput bold)              # Bold
 
-bldred=${txtbld}$(tput setaf 1)  # red
-bldgrn=${txtbld}$(tput setaf 2)  # green
-bldora=${txtbld}$(tput setaf 3)  # orange
-bldblu=${txtbld}$(tput setaf 4)  # blue
-bldmag=${txtbld}$(tput setaf 5)  # magenta
-bldcer=${txtbld}$(tput setaf 6)  # cerulean
-bldwht=${txtbld}$(tput setaf 7)  # white
-bldgry=${txtbld}$(tput setaf 8)  # grey
+bldred=${txtbld}$(tput setaf 1)  # Red
+bldgrn=${txtbld}$(tput setaf 2)  # Green
+bldora=${txtbld}$(tput setaf 3)  # Orange
+bldblu=${txtbld}$(tput setaf 4)  # Blue
+bldmag=${txtbld}$(tput setaf 5)  # Magenta
+bldcer=${txtbld}$(tput setaf 6)  # Cerulean
+bldwht=${txtbld}$(tput setaf 7)  # White
+bldgry=${txtbld}$(tput setaf 8)  # Grey
 
 chck="${txtbld}*"                # Check symbol
 warn="${bldred}VV${txtrst}"      # Warn symbol
 inst="${bldmag}==>${txtrst}"     # Install symbol
 updt="${bldblu}==>${txtrst}"     # Update symbol
 
-# Software versions
-appium_ver=0.8.2
-
-ruby_ver=2.0.0p247
-ruby_ver_m=2.0.0
-ruby_ver_p=247
-
-rvm_ver=1.21.8
+# Software versions.
+appium_ver=0.12.0
 
 node_ver=v0.10.13
 npm_ver=1.3.2
@@ -45,7 +58,22 @@ grunt_cli_ver=v0.1.9
 grunt_ver=v0.4.1
 mocha_ver=1.12.0
 
-rspec_ver=2.14.2
+maven_ver=3.0.5
+
+# Flags.
+install_all=false
+install_none=true
+install_force=false
+install_src=true
+
+install_hskl=false
+install_java=false
+install_js=false
+install_objc=false
+install_perl=false
+install_php=false
+install_python=false
+install_ruby=false
 
 # Terminate the entire script.
 # From http://stackoverflow.com/a/9894126/1282635.
@@ -87,6 +115,46 @@ check_version() {
   return 1                                  # user version is outdated
 }
 
+usage() {
+  echo ""
+  echo "Example usage:"
+  echo "  ./appium_env.sh [options]"
+  echo ""
+  echo "Running the script with no options installs Appium software only (no "`
+      `"language-specific software)."
+  echo ""
+  echo "Options:"
+  echo "  -h, --help   Prints usage."
+  echo "  -a, --all    Installs software for all languages."
+  echo "  -f, --force  Ignores certains warnings to force continuation."
+  echo "  --no-source  Does not clone the Appium source code."
+  echo "  --haskell    Installs Haskell software."
+  echo "  --java       Installs Java software."
+  echo "  --obj-c      Installs Objective-C software."
+  echo "  --php        Installs PHP software."
+  echo "  --python     Installs Python software."
+  echo "  --ruby       Installs Ruby software."
+  echo ""
+}
+
+# Parse arguments.
+# From http://stackoverflow.com/a/7069755/1282635.
+while test $# -gt 0; do
+  case "$1" in
+    -h|--help)   usage; exit 0;;
+    -a|--all)    install_all=true;;
+    -f|--force)  install_force=true;;
+    --no-source) install_src=false;;
+    --haskell)   install_hskl=true;;
+    --java)      install_java=true;;
+    --obj-c)     install_objc=true;;
+    --php)       install_php=true;;
+    --python)    install_python=true;;
+    --ruby)      install_ruby=true;;
+    *)           usage; exit 0;;
+  esac
+  shift
+done
 
 ## START
 echo -e "\nSetting up Appium environment..."
@@ -97,68 +165,18 @@ echo -e "\n$chck Checking for Homebrew...${txtrst}"
     successfully ruby <(curl -fsS https://raw.github.com/mxcl/homebrew/go)
   fi
 
-  echo -e "$updt Updating Homebrew...${txtrst}"
-  successfully brew update
-
   echo -e "$updt Doctoring Homebrew...${txtrst}"
   if ! brew doctor | grep "is ready to brew"; then
-    echo -e "${bldred}\nFix brew problems and then retry, please.${txtrst}"
-    real_exit
-  fi
-
-echo -e "\n$chck Checking for Ruby and RVM...${txtrst}"
-  if ! brew list | grep -q libyaml; then
-    echo -e "$inst Installing libyaml...${txtrst}"
-    successfully brew install libyaml
-  fi
-
-  if ! try ruby -v || ! try rvm -v; then
-    echo -e "$inst Installing Ruby and RVM (this may take "`
-              `"a few minutes)...${txtrst}"
-    successfully curl -L https://get.rvm.io \| bash -s stable --ruby
-    successfully source $HOME/.rvm/scripts/rvm
-    successfully rvm reload
-  fi
-
-echo -e "$chck Checking Ruby and RVM versions...${txtrst}"
-  r=$(successfully rvm -v | awk '{print $2}' | grep "\.")
-  if ! check_version $r $rvm_ver; then
-    echo -e "$warn RVM is outdated, should be $rvm_ver but is $r ${txtrst}"
-    echo -e "$updt Updating Ruby and RVM...${txtrst}"
-    if curl -L https://get.rvm.io/ | bash -s stable --ruby | \
-       grep "rvm-installer [options]"; then
-      successfully rvm-installer
+    if $install_force; then
+      echo -e "${bldred}\nThere are brew problems! Please fix them.${txtrst}"
+    else
+      echo -e "${bldred}\nFix brew problems and then retry, please.${txtrst}"
+      real_exit
     fi
-    successfully rvm reload
   fi
 
-  # Ruby has major and minor versions to account for (separated by 'p')
-  r=$(successfully ruby -v | awk '{print $2}' | grep "\.")
-  rr=(${r//p/ })
-
-  # Update to 2.0+
-  if ! check_version $rr $ruby_ver_m; then
-    echo -e "$warn Ruby is majorly outdated, should be $ruby_ver "`
-           `"but is $r ${txtrst}"
-    echo -e "$updt Resolving OpenSSL compatibility problem (this may take "`
-           `"a while)...${txtrst}"
-    successfully rvm pkg install openssl
-    successfully rvm reinstall all --force
-    echo -e "$inst Installing Ruby 2.0...${txtrst}"
-    successfully rvm install 2.0.0
-    echo -e "$updt Setting Ruby 2.0 as the default...${txtrst}"
-    successfully rvm use 2.0.0 --default
-  fi
-
-  if ! check_version ${rr[1]} $ruby_ver_p; then
-    echo -e "$warn Ruby is outdated, should be $ruby_ver but is $r ${txtrst}"
-    echo -e "$updt Updating Ruby and RVM...${txtrst}"
-    if curl -L https://get.rvm.io/ | bash -s stable --ruby | \
-       grep "rvm-installer [options]"; then
-      successfully rvm-installer
-    fi
-    successfully rvm reload
-  fi
+  echo -e "$updt Updating Homebrew...${txtrst}"
+  successfully brew update
 
 echo -e "\n$chck Checking for Node.js and npm..${txtrst}"
   if ! try node --version || ! try npm --version; then
@@ -186,14 +204,14 @@ echo -e "$chck Checking Node.js and npm versions...${txtrst}"
     if brew upgrade node 2>&1 | grep -q "node not installed"; then
       echo -e "$warn Your node was not installed using Homebrew. Either:"
       echo -e "     - Re-install node from http://nodejs.org/ again "`
-                `"in order to update it. OR"
+             `"in order to update it. OR"
       echo -e "     - Remove node by following the top answer from "`
-                `"http://stackoverflow.com/q/9044788, then install node "`
-                `"using Homebrew (${bldcer}brew install node${txtrst}). "`
-                `"You may have to remove the directory containing node.d "`
-                `"for linking to work."
+             `"http://stackoverflow.com/q/9044788, then install node "`
+             `"using Homebrew (${bldcer}brew install node${txtrst}). "`
+             `"You may have to remove the directory containing node.d "`
+             `"for linking to work."
       echo -e "${bldred}\nFailed. Check output and then "`
-                `"retry, please.${txtrst}" 1>&2
+             `"retry, please.${txtrst}" 1>&2
       real_exit
     fi
   fi
@@ -217,7 +235,7 @@ echo -e "\n$chck Checking for mocha...${txtrst}"
     successfully npm install -g mocha
   fi
 
-  g=$(successfully grunt --version | awk '{print $2}' | grep "\.")
+  g=$(successfully grunt --version | awk '{print $2}' | grep '\.')
   if ! check_version $(echo $g | awk '{print $1}') $grunt_cli_ver || \
      ! check_version $(echo $g | awk '{print $2}') $grunt_ver || \
      ! check_version $(successfully mocha --version) $mocha_ver; then
@@ -225,60 +243,25 @@ echo -e "\n$chck Checking for mocha...${txtrst}"
     successfully npm update
   fi
 
-echo -e "\n$chck Checking for Selenium WebDriver...${txtrst}"
-  if ! gem list --local | grep -q selenium-webdriver; then
-    echo -e "$inst Installing Selenium WebDriver...${txtrst}"
-    successfully gem install selenium-webdriver
-  fi
-
-echo -e "\n$chck Checking for appium_lib...${txtrst}"
-  if ! gem list --local | grep -q appium_lib; then
-    echo -e "$inst Installing appium_lib...${txtrst}"
-    successfully gem install appium_lib
-  fi
-
-echo -e "$chck Checking for RSpec...${txtrst}"
-  if ! try rspec --version; then
-    echo -e "$inst Installing RSpec...${txtrst}"
-    successfully gem install rspec
-  fi
-
-echo -e "$chck Checking for CI::Reporter...${txtrst}"
-  if ! gem list --local | grep -q ci_reporter; then
-    echo -e "$inst Installing CI::Reporter...${txtrst}"
-    successfully gem install ci_reporter
-  fi
-
-echo -e "$chck Checking for JSON...${txtrst}"
-  if ! gem list --local | grep -q json_pure; then
-    echo -e "$inst Installing JSON gem...${txtrst}"
-    successfully gem install json
-  fi
-
-echo -e "$chck Checking for httparty...${txtrst}"
-  if ! gem list --local | grep -q httparty; then
-    echo -e "$inst Installing httparty...${txtrst}"
-    successfully gem install httparty
-  fi
-
-  echo -e "$updt Updating gems...${txtrst}"
-  successfully gem update
-
 echo -e "\n$chck Checking for ios-sim...${txtrst}"
   if ! try ios-sim --version; then
     echo -e "$inst Installing ios-sim...${txtrst}"
     successfully brew install ios-sim
   fi
 
-echo -e "\n$chck Checking for Appium repository...${txtrst}"
-  if [ ! -d $HOME/Documents/appium/.git ]
-  then
-    echo -e "$inst Cloning Appium to $HOME/Documents/appium...${txtrst}"
-    successfully git clone https://github.com/appium/appium.git \
-                           $HOME/Documents/appium
+echo -e "\n$chck Checking for Maven...${txtrst}"
+  if ! try mvn --version; then
+    echo -e "$inst Installing Maven...${txtrst}"
+    successfully brew install homebrew/versions/maven30
   fi
 
-echo -e "$chck Checking for Appium command line...${txtrst}"
+  m=$(successfully mvn --version | awk '{print $3}')
+  if ! check_version $maven_ver $(echo $g | awk '{print $1}'); then
+    echo -e "$inst Maven 3.1+ is unstable, installing $maven_ver ...${txtrst}"
+    successfully brew install homebrew/versions/maven30
+  fi
+
+echo -e "\n$chck Checking for Appium command line...${txtrst}"
   if ! successfully appium --version; then
      echo -e "$inst Installing Appium command line...${txtrst}"
      successfully npm install -g appium
@@ -290,13 +273,43 @@ echo -e "$chck Checking Appium command line version...${txtrst}"
     successfully npm install -g appium
   fi
 
-echo -e "$chck Checking for Appium executable...${txtrst}"
+if $install_all; then
+  source ./haskell.sh;
+  source ./java.sh;
+  source ./js.sh;
+  source ./obj-c.sh;
+  source ./perl.sh;
+  source ./php.sh;
+  source ./python.sh;
+  source ./ruby.sh;
+else
+  if $install_hskl;   then source ./haskell.sh; fi
+  if $install_java;   then source ./java.sh;    fi
+  if $install_js;     then source ./js.sh;      fi
+  if $install_objc;   then source ./obj-c.sh;   fi
+  if $install_perl;   then source ./perl.sh;    fi
+  if $install_php;    then source ./php.sh;     fi
+  if $install_python; then source ./python.sh;  fi
+  if $install_ruby;   then source ./ruby.sh;    fi
+fi
+
+echo -e "\n$chck Checking for Appium executable...${txtrst}"
   if [ ! -e /Applications/Appium.app ]; then
     echo -e "${bldred} You can download the Appium executable "`
-              `"from http://appium.io/index.html.\n${txtrst}"
+           `"from http://appium.io/index.html.\n${txtrst}"
+  fi
+
+if $install_src; then
+echo -e "\n$chck Checking for Appium repository...${txtrst}"
+  if [ ! -d $HOME/Documents/appium/.git ]
+  then
+    echo -e "$inst Cloning Appium to $HOME/Documents/appium...${txtrst}"
+    successfully git clone https://github.com/appium/appium.git \
+                           $HOME/Documents/appium
   fi
 
 echo -e "\nPlease run ${bldcer}git pull${txtrst} and then ${bldcer}"`
-         `"./reset.sh --dev${txtrst} on $HOME/Documents/appium."
+       `"./reset.sh --dev${txtrst} on $HOME/Documents/appium."
+fi
 
 echo -e "${txtbld}\nDone! Have a great day!\n${txtrst}"
