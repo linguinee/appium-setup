@@ -162,7 +162,7 @@ echo -e "\nSetting up Appium environment..."
 echo -e "\n$chck Checking for Homebrew...${txtrst}"
   if ! try brew -v; then
     echo -e "$inst Installing Homebrew...${txtrst}"
-    successfully ruby <(curl -fsS https://raw.github.com/mxcl/homebrew/go)
+    successfully ruby <(curl -fsS https://raw.github.com/mxcl/homebrew/go/install)
   fi
 
   echo -e "$updt Doctoring Homebrew...${txtrst}"
