@@ -92,7 +92,6 @@ Python `--python`
 
 **\* Substitute this with the test framework of your choice.**  
 **\*\* These are gems used to access APIs for certain tests, so they are optional.**  
-**\*\*\* This is a useful tool that launches the Simulator from the command line.**
 
 After the script runs
 ---------------------
