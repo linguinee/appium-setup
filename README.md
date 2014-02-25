@@ -51,7 +51,6 @@ Appium
 * [mocha](http://visionmedia.github.io/mocha/)
 * [Maven](http://maven.apache.org/) 3.0
 * [Appium](http://appium.io/) command line (from npm)
-* [ios-sim](https://github.com/phonegap/ios-sim)***
 * Clones the [appium Github repo](https://github.com/appium/appium) to ~/Documents/appium, if you want to run Appium from source (unless you specify `--no-source`)
 
 Haskell `--haskell`

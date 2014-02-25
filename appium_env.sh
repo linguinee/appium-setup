@@ -243,12 +243,6 @@ echo -e "\n$chck Checking for mocha...${txtrst}"
     successfully npm update
   fi
 
-echo -e "\n$chck Checking for ios-sim...${txtrst}"
-  if ! try ios-sim --version; then
-    echo -e "$inst Installing ios-sim...${txtrst}"
-    successfully brew install ios-sim
-  fi
-
 echo -e "\n$chck Checking for Maven...${txtrst}"
   if ! try mvn --version; then
     echo -e "$inst Installing Maven...${txtrst}"
