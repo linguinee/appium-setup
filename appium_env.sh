@@ -58,7 +58,7 @@ grunt_cli_ver=v0.1.9
 grunt_ver=v0.4.1
 mocha_ver=1.12.0
 
-maven_ver=3.0.5
+maven_ver=3.1.1
 
 # Flags.
 install_all=false
@@ -246,13 +246,13 @@ echo -e "\n$chck Checking for mocha...${txtrst}"
 echo -e "\n$chck Checking for Maven...${txtrst}"
   if ! try mvn --version; then
     echo -e "$inst Installing Maven...${txtrst}"
-    successfully brew install homebrew/versions/maven30
+    successfully brew install homebrew/versions/maven
   fi
 
   m=$(successfully mvn --version | awk '{print $3}')
-  if ! check_version $maven_ver $(echo $g | awk '{print $1}'); then
-    echo -e "$inst Maven 3.1+ is unstable, installing $maven_ver ...${txtrst}"
-    successfully brew install homebrew/versions/maven30
+  if ! check_version $(echo $g | awk '{print $1}') $maven_ver; then
+    echo -e "$warn Maven is outdated, should be $maven_ver ...${txtrst}"
+    successfully brew install homebrew/versions/maven
   fi
 
 echo -e "\n$chck Checking for Appium command line...${txtrst}"

@@ -49,7 +49,7 @@ Appium
 * [npm](https://npmjs.org/)
 * [grunt](http://gruntjs.com/)
 * [mocha](http://visionmedia.github.io/mocha/)
-* [Maven](http://maven.apache.org/) 3.0
+* [Maven](http://maven.apache.org/)
 * [Appium](http://appium.io/) command line (from npm)
 * Clones the [appium Github repo](https://github.com/appium/appium) to ~/Documents/appium, if you want to run Appium from source (unless you specify `--no-source`)
 
