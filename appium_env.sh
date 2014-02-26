@@ -251,7 +251,7 @@ echo -e "\n$chck Checking for Maven...${txtrst}"
 
   m=$(successfully mvn --version | awk '{print $3}')
   if ! check_version $(echo $g | awk '{print $1}') $maven_ver; then
-    echo -e "$warn Maven is outdated, should be $maven_ver ...${txtrst}"
+    echo -e "$warn Maven is outdated, should be $maven_ver"
     successfully brew install homebrew/versions/maven
   fi
 
