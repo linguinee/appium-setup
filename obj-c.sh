@@ -3,5 +3,11 @@
 
 echo -e "\nSetting up Objective-C environment..."
 
-echo -e "${bldred}Nothing to install! Download the binding from "`
+echo -e "$chck Checking for xctool...${txtrst}"
+  if ! try xctool --version; then
+    echo -e "$inst Installing xctool...${txtrst}"
+    successfully brew install xctool
+  fi
+
+echo -e "${bldred}Download the binding from "`
        `"https://github.com/appium/selenium-objective-c.${txtrst}"

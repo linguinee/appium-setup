@@ -72,7 +72,8 @@ Java `--java`
 * Nothing. Download the jar from [Selenium HQ](http://www.seleniumhq.org/download/)
 
 Objective-C `--obj-c`
-* Nothing. Download the framework from [GitHub](https://github.com/appium/selenium-objective-c)
+* [xctool](https://github.com/facebook/xctool)
+* Download the framework from [GitHub](https://github.com/appium/selenium-objective-c)
 
 Perl `--perl`
 * Nothing. Install the module by following the instructions from [Selenium-Remote-Driver](https://github.com/aivaturi/Selenium-Remote-Driver)
