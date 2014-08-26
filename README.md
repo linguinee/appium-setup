@@ -13,12 +13,10 @@ If you want to develop Android tests, you also need:
 * Make sure `JAVA_HOME` is set (add `export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home"` to your `.bash_profile`)
 * Make sure `ANDROID_HOME` is set (add `export ANDROID_HOME="/path/to/android/sdk"` to your `.bash_profile`)
 * Add `/path/to/android/sdk`, `/path/to/android/sdk/tools`, and `/path/to/android/sdk/platform-tools` to your `/etc/paths` file (might have to do this with sudo)
-* Create an [AVD](http://developer.android.com/tools/devices/index.html) (look into speeding up the Emulator using Intel HAXM for [x86 AVDs](http://developer.android.com/tools/devices/emulator.html#accel-vm), and [x86 AVDs with Google APIs](http://codebutler.com/2012/10/10/configuring-a-usable-android-emulator/)) or use a real Android device to run tests on
+* Create an [AVD](http://developer.android.com/tools/devices/index.html) (look into speeding up the emulator using VM acceleration for [x86 AVDs](http://developer.android.com/tools/devices/emulator.html#accel-vm)) or use a real Android device to run tests on
 
 Execute the script
 ------------------
-
-To execute the script, you must `chmod a+x *.sh` first.
 
 Example usage:
 
@@ -65,11 +63,9 @@ Ruby `--ruby`
 * [appium_lib](http://rubygems.org/gems/appium_lib) gem
 * [rspec](http://rubygems.org/gems/rspec) gem*
 * [CI::Reporter](http://rubygems.org/gems/ci_reporter) gem*
-* [JSON](http://flori.github.io/json/) gem**
-* [httparty](http://rubygems.org/gems/httparty) gem**
 
 Java `--java`
-* Nothing. Download the jar from [Selenium HQ](http://www.seleniumhq.org/download/)
+* Nothing. Download your chosen webdriver bindings ([Selenium HQ Java](http://www.seleniumhq.org/download/), [java-client](https://github.com/appium/java-client))
 
 Objective-C `--obj-c`
 * [xctool](https://github.com/facebook/xctool)
@@ -84,28 +80,17 @@ PHP `--php`
 * [Composer](http://getcomposer.org/)
 * [Xdebug](http://xdebug.org/index.php)*
 * [PHPUnit](http://phpunit.de/manual/)*
-* [php-webdriver](https://github.com/Element-34/php-webdriver)
+* Download your chosen webdriver bindings ([php-webdriver](https://github.com/facebook/php-webdriver), [phpunit-selenium](https://github.com/giorgiosironi/phpunit-selenium), [php-client](https://github.com/appium/php-client), etc.)
 
 Python `--python`
 * [Python](http://www.python.org/) 2.7
 * [pip](http://www.pip-installer.org/en/latest/)
-* [selenium](https://pypi.python.org/pypi/selenium)
+* Download your chosen webdriver bindings ([selenium](https://pypi.python.org/pypi/selenium), [Appium-Python-Client](https://github.com/appium/python-client))
 
-**\* Substitute this with the test framework of your choice.**  
-**\*\* These are gems used to access APIs for certain tests, so they are optional.**  
+**\* Substitute this with the test framework of your choice.**
 
 After the script runs
 ---------------------
 
 * Install Appium.app if you would like and have not done so already. It has a nice Inspector functionality that allows you to record actions and view elements.
 * Run `git pull` and then `./reset.sh --dev` on ~/Documents/appium.
-* Go through the Appium [User Quickstart](http://appium.io/getting-started.html) below (downloads a sample iOS calculator app and runs tests).
-
-```bash
-mkdir appium-test && cd appium-test
-sudo authorize_ios  # enable developer use of iOS sim
-npm install wd
-curl -O https://raw.github.com/appium/appium/master/sample-code/examples/node/simplest.js
-appium &
-node simplest.js
-```

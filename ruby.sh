@@ -7,8 +7,6 @@
 # appium_lib          (http://rubygems.org/gems/appium_lib)
 # rspec               (http://rubygems.org/gems/rspec)
 # CI::Reporter        (http://rubygems.org/gems/ci_reporter)
-# JSON                (http://flori.github.io/json/)
-# httparty            (http://rubygems.org/gems/httparty)
 
 ruby_ver=2.0.0p247
 ruby_ver_m=2.0.0
@@ -96,18 +94,6 @@ echo -e "\n$chck Checking for CI::Reporter...${txtrst}"
   if ! gem list --local | grep -q ci_reporter; then
     echo -e "$inst Installing CI::Reporter...${txtrst}"
     successfully gem install ci_reporter
-  fi
-
-echo -e "\n$chck Checking for JSON...${txtrst}"
-  if ! gem list --local | grep -q json_pure; then
-    echo -e "$inst Installing JSON gem...${txtrst}"
-    successfully gem install json
-  fi
-
-echo -e "\n$chck Checking for httparty...${txtrst}"
-  if ! gem list --local | grep -q httparty; then
-    echo -e "$inst Installing httparty...${txtrst}"
-    successfully gem install httparty
   fi
 
 echo -e "\n$updt Updating gems...${txtrst}"

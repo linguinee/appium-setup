@@ -3,7 +3,6 @@
 
 # Python 2.7  (http://www.python.org/)
 # pip         (http://www.pip-installer.org/en/latest/)
-# selenium    (https://pypi.python.org/pypi/selenium)
 
 echo -e "\nSetting up Python environment..."
 
@@ -18,11 +17,4 @@ echo -e "\n$chck Checking for pip...${txtrst}"
     echo -e "$inst Installing pip...${txtrst}"
     echo -e "$warn This must be done using sudo..."
     successfully sudo easy_install pip
-  fi
-
-echo -e "\n$chck Checking for selenium Python bindings...${txtrst}"
-  if ! pip list | grep selenium; then
-    echo -e "$inst Installing selenium...${txtrst}"
-    echo -e "$warn This must be done using sudo..."
-    successfully sudo pip install -U selenium
   fi

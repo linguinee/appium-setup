@@ -49,16 +49,16 @@ inst="${bldmag}==>${txtrst}"     # Install symbol
 updt="${bldblu}==>${txtrst}"     # Update symbol
 
 # Software versions.
-appium_ver=0.12.0
+appium_ver=1.2.0
 
-node_ver=v0.10.13
-npm_ver=1.3.2
+node_ver=v0.10.25
+npm_ver=1.3.24
 
-grunt_cli_ver=v0.1.9
+grunt_cli_ver=v0.1.13
 grunt_ver=v0.4.1
-mocha_ver=1.12.0
+mocha_ver=1.17.1
 
-maven_ver=3.1.1
+maven_ver=3.2.1
 
 # Flags.
 install_all=false

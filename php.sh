@@ -6,7 +6,6 @@
 # Xdebug        (http://xdebug.org/index.php)
 # PHPUnit       (http://phpunit.de/manual/)
 # Composer      (http://getcomposer.org/)
-# php-webdriver (https://github.com/facebook/php-webdriver)
 
 php_ver=5.3.3
 
